@@ -1,0 +1,69 @@
+/* page.css */
+@import url('tokens.css');
+
+/* Typography */
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-background-page);
+  padding: var(--space-md);
+}
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--color-accent);
+}
+h1 {
+  font-size: var(--font-size-h1);
+  margin-bottom: var(--space-md);
+}
+h2 {
+  font-size: var(--font-size-h2);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+
+/* Header & Nav */
+header {
+  background-color: var(--color-background-header);
+  color: var(--color-text-header);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+nav a {
+  color: var(--color-link);
+  margin-right: var(--space-md);
+  text-decoration: none;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Links */
+a {
+  color: var(--color-link);
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Main content */
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+article, section {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Utility */
+ul {
+  list-style: disc inside;
+}
+ol {
+  list-style: decimal inside;
+}
