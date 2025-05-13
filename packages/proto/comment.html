@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comments</title>
+
+    <!-- 1) Register your components (sc-comment + sc-comments-list) -->
+    <script type="module" src="/src/comment-list.ts"></script>
+
+    <!-- 2) Global CSS -->
+    <link rel="stylesheet" href="/styles/reset.css" />
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <link rel="stylesheet" href="/styles/page.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Comments</h1>
+    </header>
+
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="post.html">Back to Post</a>
+    </nav>
+
+    <main>
+      <!-- 3) Render all comments from your JSON -->
+      <sc-comments-list src="/data/comments.json"></sc-comments-list>
+    </main>
+  </body>
+</html>
