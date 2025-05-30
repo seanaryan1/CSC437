@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Viewer</title>
+
+  <!-- Load Lit view elements + comments -->
+  <script type="module" src="/src/post-view.ts"></script>
+  <script type="module" src="/src/project-view.ts"></script>
+  <script type="module" src="/src/comment-list.ts"></script>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="/public/styles/reset.css" />
+  <link rel="stylesheet" href="/public/styles/tokens.css" />
+  <link rel="stylesheet" href="/public/styles/page.css" />
+</head>
+<body>
+  <!-- We don't know which element we need until we parse ?type= -->
+  <div id="app"></div>
+
+  <script type="module">
+    import { define } from "@calpoly/mustang";
+    import { PostView } from "/src/post-view.ts";
+    import { ProjectView } from "/src/project-view.ts";
+
+    define({
+      "sc-post-view": PostView,
+      "sc-project-view": ProjectView
+    });
+
+    /* Decide at runtime which custom element to mount */
+    const params = new URLSearchParams(location.search);
+    const type = params.get("type") || "post";
+    const app  = document.getElementById("app");
+
+    if (type === "project") {
+      app.appendChild(document.createElement("sc-project-view"));
+    } else {
+      app.appendChild(document.createElement("sc-post-view"));
+    }
+  </script>
+</body>
+</html>

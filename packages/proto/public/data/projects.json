@@ -1,0 +1,24 @@
+[
+    {
+      "id": "summer-dress",
+      "title": "Handmade Summer Dress",
+      "imgSrc": "/img/summer-dress-thumb.jpg",
+      "tags": "dress,summer,cotton",
+      "blurb": "A breezy A-line dress perfect for warm days."
+    },
+    {
+      "id": "patchwork-quilt",
+      "title": "Patchwork Quilt",
+      "imgSrc": "/img/patchwork-quilt-thumb.jpg",
+      "tags": "quilt,upcycle,scrap-fabric",
+      "blurb": "Use fabric scraps to craft a cozy throw."
+    },
+    {
+      "id": "embroidered-jacket",
+      "title": "Embroidered Denim Jacket",
+      "imgSrc": "/img/embroidered-jacket-thumb.jpg",
+      "tags": "embroidery,denim,jacket",
+      "blurb": "Custom floral motifs give new life to a thrift-store find."
+    }
+  ]
+  

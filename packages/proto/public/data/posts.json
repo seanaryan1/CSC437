@@ -1,0 +1,27 @@
+[
+    {
+      "id": "vintage-sewing",
+      "title": "Vintage Sewing Tutorial",
+      "imgSrc": "/img/vintage-thumb.jpg",
+      "author": "Sean",
+      "date": "2025-05-28",
+      "summary": "Combine classic vintage patterns with modern tweaks for a timeless look."
+    },
+    {
+      "id": "upcycled-tote",
+      "title": "Easy Upcycled Tote Bag",
+      "imgSrc": "/img/tote-thumb.jpg",
+      "author": "Alex",
+      "date": "2025-05-20",
+      "summary": "Turn old jeans into a sturdy tote—perfect for beginners."
+    },
+    {
+      "id": "french-seams",
+      "title": "Mastering French Seams",
+      "imgSrc": "/img/french-seam-thumb.jpg",
+      "author": "Olivia",
+      "date": "2025-05-10",
+      "summary": "Give your garments a professional finish with this classic seam technique."
+    }
+  ]
+  
