@@ -2,6 +2,7 @@
 import {  Comment } from "/Users/arshanaryan/CSC437/packages/server/src/models/comment.ts"; // Corrected import path
 
 export interface Model {
+    commentId?: string; // currently selected comment
     comment?: Comment;      // currently selected project
 }
 
