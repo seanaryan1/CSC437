@@ -18,30 +18,67 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var comment_svc_exports = {};
 __export(comment_svc_exports, {
+  create: () => create,
   default: () => comment_svc_default,
-  getByUser: () => getByUser
+  getById: () => getById,
+  getByUser: () => getByUser,
+  index: () => index,
+  remove: () => remove,
+  update: () => update
 });
 module.exports = __toCommonJS(comment_svc_exports);
 var import_mongoose = require("mongoose");
 const CommentSchema = new import_mongoose.Schema(
   {
+    commentId: {
+      type: Number,
+      required: true,
+      unique: true,
+      // ensure no two comments share the same numeric ID
+      index: true
+      // index it so lookups by commentId are fast
+    },
     user: { type: String, required: true, trim: true },
     date: { type: String, required: true, trim: true },
     pfp: { type: String, trim: true },
     text: { type: String, required: true, trim: true }
   },
-  { collection: "CommentSchema" }
-  // ← match your Compass collection name
+  {
+    collection: "CommentSchema"
+  }
 );
 const CommentModel = (0, import_mongoose.model)("Comment", CommentSchema);
+function index() {
+  return CommentModel.find().exec();
+}
+function getById(id) {
+  return CommentModel.findById(id).exec();
+}
 function getByUser(user) {
   return CommentModel.findOne({ user }).exec();
 }
-var comment_svc_default = {
-  getByUser
-  /*, …*/
-};
+function create(json) {
+  const c = new CommentModel(json);
+  return c.save();
+}
+function update(id, json) {
+  return CommentModel.findByIdAndUpdate(id, json, { new: true }).exec().then((updated) => {
+    if (!updated) throw new Error(`Comment ${id} not found`);
+    return updated;
+  });
+}
+function remove(id) {
+  return CommentModel.findByIdAndDelete(id).exec().then((deleted) => {
+    if (!deleted) throw new Error(`Comment ${id} not found`);
+  });
+}
+var comment_svc_default = { index, getById, getByUser, create, update, remove };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  getByUser
+  create,
+  getById,
+  getByUser,
+  index,
+  remove,
+  update
 });
