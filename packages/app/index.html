@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ­­­­­­­­­META -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sewing & Crafts Community</title>
+
+  <!-- ­­­­­­­­­Global styles (unchanged) -->
+  <link rel="stylesheet" href="/styles/reset.css" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/page.css" />
+</head>
+
+    <body>
+        <mu-history provides="sc:history">
+          <mu-auth provides="sc:auth" redirect="/login.html">
+            <!-- NEW: the single store for local state -->
+            <mu-store provides="sc:model">
+              <article class="page">
+                <blazing-header></blazing-header>  <!-- or sc-header -->
+                <mu-switch></mu-switch>
+              </article>
+            </mu-store>
+          </mu-auth>
+        </mu-history>
+      
+        <script type="module" src="./main.ts"></script>
+      </body>
+</html>

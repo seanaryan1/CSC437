@@ -1,0 +1,53 @@
+{
+  
+  "name": "app",
+  
+  "version": "1.0.0",
+  
+  "type": "module",
+  
+  "devDependencies": {
+  
+    
+  "tsc": "^2.0.4",
+  
+    
+  "vite": "^5.0.0"
+  
+  },
+  
+  "scripts": {
+  
+    
+  "dev": "nodemon",
+  
+    
+  "build": "npx etsc",
+  
+    
+  "start": "npm run build && npm run start:node",
+  
+    
+  "start:api": "cross-env STATIC=./public npm run start",
+  
+    
+  "start:app": "cross-env STATIC=../app/dist npm run start",
+  
+    
+  "start:node": "node dist/index.js",
+  
+    
+  "start:proto": "cross-env STATIC=../proto/dist npm run start",
+  
+    
+  "check": "tsc --noEmit"
+  
+  },
+  
+  "dependencies": {
+  
+    
+  "server": "^1.0.0"
+  
+  }
+}
