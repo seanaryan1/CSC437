@@ -1,0 +1,30 @@
+:root {
+  --color-background-page: #f8f4f0;
+  --color-background-header: #6d3b2e;
+  --color-text: #333333;
+  --color-text-header: #f8f4f0;
+  --color-accent: #b55031;
+  --color-link: var(--color-accent);
+
+  /* Fonts */
+  --font-body: 'Roboto', sans-serif;
+  --font-display: 'Merriweather', serif;
+  --font-size-base: 1rem;
+  --font-size-h1: 2.25rem;
+  --font-size-h2: 1.75rem;
+
+  /* Spacing */
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+}
+
+
+body.dark-mode {
+  --color-background-page: #333333;
+  --color-background-header: #222222;
+  --color-text: #f0f0f0;
+  --color-text-header: #f8f4f0;
+  --color-accent: #ff8a65;
+  --color-link: var(--color-accent);
+}
