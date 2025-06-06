@@ -1,11 +1,13 @@
 [
     {
+      "commentId": 1,
       "user": "Sean",
       "date": "2025-01-01",
       "pfp": "/images/image.png",
       "text": "Great tutorial! I loved the vintage vibes."
     },
     {
+      "commentId": 2,
       "user": "Alex",
       "date": "2025-01-03",
       "pfp": "/images/image.png",

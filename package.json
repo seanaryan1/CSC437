@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "http-server public -p 3000",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server packages/public",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx vite",
+    "build": "npx tsc && npx vite build"
+    
   },
   "repository": {
     "type": "git",
