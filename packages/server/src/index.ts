@@ -1,48 +1,49 @@
 // packages/server/src/index.ts
-
 import express, { Request, Response } from "express";
 import { connect } from "./services/mongo";
+import comments from './routes/comments';
 import commentsRouter from "./routes/comments";
-import authRoutes from "./routes/auth";
-import path from "node:path";
+import auth from "./routes/auth";
 import fs from "node:fs/promises";
-
+import path from "node:path";
+import authRoutes from './routes/auth';
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use("/auth", auth);
+connect("Comments");   // ← your Atlas DB name
+export * from "./models/comment";
+export * from "./models/credential";
+export * from "./models/project";
+export * from "./models/userProfile";
 
-// 1) Connect to your MongoDB database (replace "Comments" with your actual DB name)
-connect("Comments");
 
-// 2) Parse JSON bodies for incoming API requests
+
+const port = process.env.PORT || 3000;
+const staticDir = process.env.STATIC || "public";
+
+// serve your proto static files
+app.use(express.static(staticDir));
+
+// parse JSON bodies
 app.use(express.json());
 
-// 3) Mount your REST API routes under /api
-//    - /api/comments → commentsRouter
-//    - /api/...        → authRoutes (e.g. login, signup, etc.)
+// mount the comments REST API
 app.use("/api/comments", commentsRouter);
-app.use("/api", authRoutes);
 
-// 4) Serve the built front-end from packages/app/dist
-//    (After running `npm run build` in packages/app, Vite outputs into /app/dist)
-const clientDist = path.join(__dirname, "../app/dist");
-app.use(express.static(clientDist));
+app.use('/api', authRoutes); 
 
-// 5) Catch-all handler: for any GET request that isn’t an API or a static file,
-//    return index.html so the client-side router can take over.
-app.get("*", async (_req: Request, res: Response) => {
-  try {
-    const indexHtml = await fs.readFile(
-      path.join(clientDist, "index.html"),
-      "utf8"
-    );
-    res.send(indexHtml);
-  } catch (err) {
-    console.error("Error reading index.html from clientDist:", err);
-    res.status(500).send("Server error");
-  }
+app.listen(3000, () => console.log('Server running on port 3000'));
+
+// you can still have other routes
+app.get("/hello", (_req: Request, res: Response) => {
+  res.send("Hello, World");
 });
 
-// 6) Start the server exactly once, listening on port 3000 (or the PORT env var)
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.use("/app", async (_req, res) => {
+  const htmlPath = path.resolve(staticDir, "index.html");
+  const html = await fs.readFile(htmlPath, "utf8");
+  res.send(html);
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
