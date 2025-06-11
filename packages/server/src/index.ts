@@ -1,21 +1,14 @@
 // packages/server/src/index.ts
 import express, { Request, Response } from "express";
 import { connect } from "./services/mongo";
-import comments from './routes/comments';
 import commentsRouter from "./routes/comments";
-import auth from "./routes/auth";
+import postsRouter from "./routes/posts";
+import authRoutes from "./routes/auth";
 import fs from "node:fs/promises";
 import path from "node:path";
-import authRoutes from './routes/auth';
+
 const app = express();
-app.use("/auth", auth);
-connect("Comments");   // ← your Atlas DB name
-export * from "./models/comment";
-export * from "./models/credential";
-export * from "./models/project";
-export * from "./models/userProfile";
-
-
+connect("Post"); // your MongoDB database name
 
 const port = process.env.PORT || 3000;
 const staticDir = process.env.STATIC || "public";
@@ -26,12 +19,10 @@ app.use(express.static(staticDir));
 // parse JSON bodies
 app.use(express.json());
 
-// mount the comments REST API
+// mount REST APIs
 app.use("/api/comments", commentsRouter);
-
-app.use('/api', authRoutes); 
-
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.use("/api/posts", postsRouter);
+app.use("/auth", authRoutes);
 
 // you can still have other routes
 app.get("/hello", (_req: Request, res: Response) => {
