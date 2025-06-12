@@ -1,9 +1,13 @@
 // packages/server/src/models/post.ts
+
+
 export interface Post {
-  title: string;
-  content: string;
-  authorId: string;
-  imageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
+  id:       string;
+  title:    string;
+  imgSrc:   string;
+  author:   string;
+  date:     string;
+  summary:  string;
 }
+
+

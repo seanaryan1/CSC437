@@ -1,40 +1,29 @@
 // packages/server/src/index.ts
-import express, { Request, Response } from "express";
-import { connect } from "./services/mongo";
-import commentsRouter from "./routes/comments";
-import postsRouter from "./routes/posts";
-import authRoutes from "./routes/auth";
-import fs from "node:fs/promises";
-import path from "node:path";
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+
+import { connect } from './services/mongo';
+import commentsRouter from './routes/comments';
+import postsRouter    from './routes/posts';
+import authRouter     from './routes/auth';
 
 const app = express();
-connect("Post"); // your MongoDB database name
+const PORT = Number(process.env.PORT) || 3000;
 
-const port = process.env.PORT || 3000;
-const staticDir = process.env.STATIC || "public";
+// 1) Connect once to your "Comments" DB
+connect("Comments");
 
-// serve your proto static files
-app.use(express.static(staticDir));
-
-// parse JSON bodies
+// 2) JSON body parser
 app.use(express.json());
 
-// mount REST APIs
+// 3) Mount your API routes
 app.use("/api/comments", commentsRouter);
-app.use("/api/posts", postsRouter);
-app.use("/auth", authRoutes);
+app.use("/api/posts",    postsRouter);
+app.use("/api/auth",     authRouter);
 
-// you can still have other routes
-app.get("/hello", (_req: Request, res: Response) => {
-  res.send("Hello, World");
-});
-
-app.use("/app", async (_req, res) => {
-  const htmlPath = path.resolve(staticDir, "index.html");
-  const html = await fs.readFile(htmlPath, "utf8");
-  res.send(html);
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+// 4) Start listening (no static, no fallback yet)
+app.listen(PORT, () => {
+  console.log(`🚀  API server up on http://localhost:${PORT}`);
 });
