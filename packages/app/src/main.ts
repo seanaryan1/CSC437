@@ -13,7 +13,7 @@ import { CommentViewElement   } from "../views/comment-view";
 import { CommentEditElement   } from "../views/comment-edit";
 import { UserViewElement      } from "../views/user-view";
 import { PortfolioViewElement } from "../views/portfolio-view";
-import { PostView             } from "../views/post-view";
+import { PostViewElement             } from "../views/post-view";
 import { ProjectView          } from "../views/project-view";
 
 /* ---------- route table used by <mu-switch> ---------- */
@@ -101,6 +101,6 @@ define({
   "comment-edit":    CommentEditElement,
   "portfolio-view":  PortfolioViewElement,
   "user-view":       UserViewElement,
-  "post-view":       PostView,
+  "post-view":       PostViewElement,
   "project-view":    ProjectView
 });

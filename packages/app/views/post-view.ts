@@ -1,76 +1,59 @@
-import { LitElement, html, css } from "lit";
+// packages/app/src/views/post-view.ts
 
-interface Post {
-  id:        string;
-  title:     string;
-  body:      string;
-  author:    string;
-  createdAt: string;
-}
+import { define, View } from "@calpoly/mustang";
+import { html } from "lit";
+import { property } from "lit/decorators.js";
 
-export class PostView extends LitElement {
-  /* ---------- reactive attributes (no decorators) ---------- */
-  static properties = {
-    postId: { type: String, attribute: "post-id" }
-  };
+import { Model } from "../src/model";
+import { Msg }   from "../src/messages";
 
-  /* ---------- internal state ---------- */
-  postId = "";
-  private post:  Post   | null = null;
-  private error: string | null = null;
+export class PostViewElement extends View<Model, Msg> {
+  /**
+   * Bound to the URL segment `:id` by your router:
+   *   view: p => html`<post-view post-id=${p.id}></post-view>`
+   */
+  @property({ attribute: "post-id" })
+  postId?: string;
 
-  /* ---------- styles ---------- */
-  static styles = css`
-    :host { display:block; padding:1rem; max-width:60ch; margin:auto; }
-    h1    { font-size:2rem; margin-bottom:.25rem; }
-    .meta { color:var(--muted-500, #666); margin-bottom:1.5rem; }
-    .error { color:red; }
-    section + section { margin-top:2rem; }
-  `;
-
-  /* ---------- lifecycle ---------- */
-  connectedCallback() {
-    super.connectedCallback();
-    this.load();
-  }
-  updated(changed: Map<string, unknown>) {
-    if (changed.has("postId")) this.load();
+  constructor() {
+    // “sc:model” must match the <mu-store provides="sc:model"> in index.html
+    super("sc:model");
   }
 
-  /* ---------- data loader ---------- */
-  private async load() {
-    this.post = null;
-    this.error = null;
-    if (!this.postId) return;            // nothing to fetch yet
-
-    try {
-      const res = await fetch(`/api/posts/${this.postId}`);
-      if (!res.ok) throw new Error(res.statusText);
-      this.post = await res.json();
-    } catch (err) {
-      this.error = (err as Error).message;
-    }
-  }
-
-  /* ---------- render ---------- */
   render() {
-    if (this.error) return html`<p class="error">⚠️ ${this.error}</p>`;
-    if (!this.post) return html`<p>Loading…</p>`;
-
     return html`
-      <article>
-        <h1>${this.post.title}</h1>
-        <p class="meta">
-          by ${this.post.author} —
-          ${new Date(this.post.createdAt).toLocaleDateString()}
-        </p>
-        <section>${this.post.body}</section>
-      </article>
-
-      <section>
-        <h2>Comments</h2>
-        <sc-comments-list src="/api/posts/${this.post.id}/comments"></sc-comments-list>
-      </section>
+      ${this.model.post
+        ? html`
+            <article>
+              <h2>${this.model.post.title}</h2>
+              <p>
+                <strong>By:</strong> ${this.model.post.author}
+                &nbsp;|&nbsp;
+                <strong>Date:</strong> ${new Date(this.model.post.date).toLocaleDateString()}
+              </p>
+              ${this.model.post.imgSrc
+                ? html`<img src=${this.model.post.imgSrc} alt="Image for ${this.model.post.title}" />`
+                : html``}
+              <section>
+                <p>${this.model.post.summary}</p>
+              </section>
+              <a href="/app/post/${this.postId}/edit">Edit this post</a>
+            </article>
+          `
+        : html`<p>Loading post…</p>`}
     `;
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    if (this.postId && !this.model.post) {
+      this.dispatchMessage([
+        "post/select",
+        { postId: this.postId },
+      ]);
+    }
+  }
 }
+
+define({ "post-view": PostViewElement });

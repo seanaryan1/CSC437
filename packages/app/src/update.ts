@@ -1,8 +1,9 @@
 // packages/app/src/update.ts
 import { Auth, Update } from "@calpoly/mustang";
-import { Msg } from "./messages";
-import { Model } from "./model";
-import { Comment } from ".../../server/src/models/comment"; // ← make sure you import Comment
+import type { Msg }     from "./messages";
+import type { Model }   from "./model";
+import type { Comment } from ".../../server/src/models/comment";
+import type { Post }    from ".../../server/src/models/post";
 
 export default function update(
   message: Msg,
@@ -10,62 +11,67 @@ export default function update(
   user: Auth.User
 ) {
   switch (message[0]) {
+    // ─── COMMENTS ───────────────────────────────────────────────────────────
     case "comment/select": {
-      // TypeScript knows message[1] is { commentId: string } here
       const { commentId } = message[1];
       loadComment({ commentId }, user)
-        .then((comment) => {
-          // comment might be undefined if fetch failed, but we’ll overwrite model.comment anyway
-          apply((model) => ({ ...model, comment: comment }));
-        })
-        .catch((err) => {
-          console.error("Failed to load comment:", err);
-        });
+        .then((comment) => apply((model) => ({ ...model, comment })))
+        .catch((err) => console.error("Failed to load comment:", err));
       break;
     }
 
     case "comment/save": {
-      // Narrow message[1] so TS knows it has commentId, comment, onSuccess, onFailure
-      const payload = message[1] as {
-        commentId: string;
-        comment: Comment;
-        onSuccess?: () => void;
-        onFailure?: (err: Error) => void;
-      };
-
-      // Only pass exactly { commentId, comment } to saveComment
-      saveComment(
-        { commentId: payload.commentId, comment: payload.comment },
-        user
-      )
-        .then((updatedComment) => {
-          apply((model) => ({ ...model, comment: updatedComment }));
+      const { commentId, comment, onSuccess, onFailure } = message[1];
+      saveComment({ commentId, comment }, user)
+        .then((updated) => {
+          apply((model) => ({ ...model, comment: updated }));
+          onSuccess?.();
         })
-        .then(() => {
-          if (payload.onSuccess) {
-            payload.onSuccess();
-          }
-        })
-        .catch((err: Error) => {
-          if (payload.onFailure) {
-            payload.onFailure(err);
-          }
+        .catch((err) => {
+          console.error("Failed to save comment:", err);
+          onFailure?.(err);
         });
+      break;
+    }
+        // ─── load all comments ───────────────────────────────────────────────
+        case "comment/index": {
+          fetch("/api/comments", { headers: Auth.headers(user) })
+            .then(r => r.json())
+            .then((comments: Comment[]) =>
+              apply(m => ({ ...m, comments }))
+            )
+            .catch(err => console.error("Failed to load comments:", err));
+          break;
+        }
+    
+        // ─── load all posts ──────────────────────────────────────────────────
+        case "post/index": {
+          fetch("/api/posts", { headers: Auth.headers(user) })
+            .then(r => r.json())
+            .then((posts: Post[]) =>
+              apply(m => ({ ...m, posts }))
+            )
+            .catch(err => console.error("Failed to load posts:", err));
+          break;
+        }
+    
+
+    // ─── POSTS ───────────────────────────────────────────────────────────────
+    case "post/select": {
+      const { postId } = message[1];
+      loadPost({ postId }, user)
+        .then((post) => apply((model) => ({ ...model, post })))
+        .catch((err) => console.error("Failed to load post:", err));
       break;
     }
 
     default:
-      // If you ever hit a message type that isn’t handled above, this will throw.
-      // TS will let you know at compile time if you forgot to cover a case in the Msg union.
-      const unhandled: never = message[0];
-      throw new Error(`Unhandled message "${unhandled}"`);
+      const _exhaustive: unknown = message[0];
+      throw new Error(`Unhandled message "${_exhaustive}"`);
   }
 }
 
-/** 
- * Fetch a single comment by ID from the backend 
- * Returns a Promise<Comment | undefined>
- */
+/** Fetch a single comment by ID **/
 async function loadComment(
   payload: { commentId: string },
   user: Auth.User
@@ -73,33 +79,37 @@ async function loadComment(
   const res = await fetch(`/api/comments/${payload.commentId}`, {
     headers: Auth.headers(user),
   });
-  if (!res.ok) {
-    return undefined;
-  }
-  return (await res.json()) as Comment;
+  if (!res.ok) return undefined;
+  return res.json() as Promise<Comment>;
 }
 
-/** 
- * Send a PUT to update a comment. Returns a Promise<Comment> on success, 
- * or throws if the status is not 200. 
- */
-function saveComment(
+/** PUT to update a comment **/
+async function saveComment(
   msg: { commentId: string; comment: Comment },
   user: Auth.User
 ): Promise<Comment> {
-  return fetch(`/api/comments/${msg.commentId}`, {
+  const res = await fetch(`/api/comments/${msg.commentId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       ...Auth.headers(user),
     },
     body: JSON.stringify(msg.comment),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`Failed to save comment ${msg.commentId}`);
-      }
-      return res.json();
-    })
-    .then((json) => json as Comment);
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to save comment ${msg.commentId}`);
+  }
+  return res.json() as Promise<Comment>;
+}
+
+/** Fetch a single post by ID **/
+async function loadPost(
+  payload: { postId: string },
+  user: Auth.User
+): Promise<Post | undefined> {
+  const res = await fetch(`/api/posts/${payload.postId}`, {
+    headers: Auth.headers(user),
+  });
+  if (!res.ok) return undefined;
+  return res.json() as Promise<Post>;
 }

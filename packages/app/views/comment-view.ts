@@ -34,7 +34,6 @@ export class CommentViewElement extends View<Model, Msg> {
               ${this.model.comment.pfp
                 ? html`<img src=${this.model.comment.pfp} alt="Profile picture" />`
                 : html``}
-              <p><small>_id: ${this.model.comment._id}</small></p>
               <a href="/app/comment/${this.commentId}/edit">Edit this comment</a>
             </article>
           `
